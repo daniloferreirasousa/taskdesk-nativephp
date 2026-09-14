@@ -30,10 +30,10 @@ class TarefaController extends Controller
     {
         $tarefa = Tarefa::create($request->validated());
 
-        // Notification::new()
-        //     ->title('TaskDesk - Nova Tarefa')
-        //     ->message("A tarefa '{$tarefa['titulo']}' foi adicionada.")
-        //     ->show();
+        Notification::new()
+            ->title('TaskDesk - Nova Tarefa')
+            ->message("A tarefa '{$tarefa['titulo']}' foi adicionada.")
+            ->show();
         
         return redirect()->route('tarefas.index');
     }
@@ -47,12 +47,12 @@ class TarefaController extends Controller
 
         $tarefa->save();
 
-        // if ($tarefa->concluida) {
-        //     // Notification::new()
-        //     //     ->title('Parabéns!')
-        //     //     ->message("Você concluiu: '{$tarefa->titulo}'")
-        //     //     ->show();
-        // }
+        if ($tarefa->concluida) {
+            Notification::new()
+                ->title('Parabéns!')
+                ->message("Você concluiu: '{$tarefa->titulo}'")
+                ->show();
+        }
 
         return redirect()->route('tarefas.index');
     }

@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Native\Desktop\Facades\Window;
 use Native\Desktop\Contracts\ProvidesPhpIni;
+use Native\Desktop\Facades\Menu;
+use Native\Desktop\Facades\MenuBar;
 
 
 class NativeAppServiceProvider implements ProvidesPhpIni
@@ -14,7 +16,31 @@ class NativeAppServiceProvider implements ProvidesPhpIni
      */
     public function boot(): void
     {
-        Window::open();  
+        Window::open()
+            ->title('TaskDesk')
+            ->width(900)
+            ->height(700)
+            ->minWidth(700)
+            ->minHeight(500)
+            ->rememberState();
+            
+        Menu::default();
+
+        MenuBar::create()
+            ->showDockIcon()
+            ->tooltip('TaskDeks')
+            ->withContextMenu(
+                Menu::create(
+                    Menu::label('TaskDesk'),
+                    Menu::separator(),
+                    Menu::route(
+                        'tarefas.index',
+                        'Abir TaskDeks'
+                    ),
+                    Menu::separator(),
+                    Menu::quit(),
+                )
+            );
         
     }
 
