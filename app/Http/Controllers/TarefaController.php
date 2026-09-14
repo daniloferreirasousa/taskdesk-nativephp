@@ -9,13 +9,21 @@ use Native\Desktop\Facades\Notification;
 
 class TarefaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $filtro = $request->get('filtro');
+
         $tarefasPendentes = Tarefa::where('concluida', false)
+            ->when($filtro, function ($query) use ($filtro) {
+                $query->where('prioridade', 'like', "%{$filtro}%");
+            })
             ->orderBy('created_at', 'desc')
             ->get();
         
         $tarefasConcluidas = Tarefa::where('concluida', true)
+            ->when($filtro, function ($query) use ($filtro) {
+                $query->where('prioridade', 'like', "%{$filtro}%");
+            })
             ->orderBy('concluida_em', 'desc')
             ->get();
 

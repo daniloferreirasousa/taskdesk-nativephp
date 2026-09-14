@@ -16,30 +16,50 @@ class NativeAppServiceProvider implements ProvidesPhpIni
      */
     public function boot(): void
     {
-        Window::open()
+        Window::open('main')
             ->title('TaskDesk')
             ->width(900)
             ->height(700)
             ->minWidth(700)
             ->minHeight(500)
             ->rememberState();
-            
-        Menu::default();
+
+        Window::open('settings')
+            ->title('Configurações')
+            ->route('configuracoes')
+            ->width(600)
+            ->height(500)
+            ->minWidth(500)
+            ->minHeight(400);
+
+        Window::open('about')
+            ->title('Sobre o TaskDesk')
+            ->route('sobre')
+            ->width(450)
+            ->height(300)
+            ->resizable(false);
 
         MenuBar::create()
             ->showDockIcon()
             ->tooltip('TaskDeks')
             ->withContextMenu(
-                Menu::create(
-                    Menu::label('TaskDesk'),
-                    Menu::separator(),
-                    Menu::route(
+                Menu::new()
+                    ->label('TaskDesk')
+                    ->separator()
+                    ->route(
                         'tarefas.index',
-                        'Abir TaskDeks'
-                    ),
-                    Menu::separator(),
-                    Menu::quit(),
-                )
+                        'Tarefas'
+                    )
+                    ->route(
+                        'configuracoes',
+                        'Configurações'
+                    )
+                    ->route(
+                        'sobre',
+                        'Sobre'
+                    )
+                    ->separator()
+                    ->quit('Sair')
             );
         
     }

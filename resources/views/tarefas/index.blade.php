@@ -16,6 +16,18 @@
             <p class="text-gray-500">
                 Gerenciador de Tarefas desktop
             </p>
+
+            <p class="text-red-600">
+                Pendentes: {{ $tarefasPendentes->count() }}
+            </p>
+
+            <p class="text-green-600">
+                Concluídas: {{ $tarefasConcluidas->count() }}
+            </p>
+
+            <p class="text-semibold text-gray-700">
+                Total: {{ ($tarefasConcluidas->count() + $tarefasPendentes->count()) }}
+            </p>
         </header>
     
         <section class="bg-white rounded-lg shadow p-6 mb-6">
@@ -85,9 +97,40 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded">
+                <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded mt-2">
                     Adicionar Tarefa
                 </button>
+            </form>
+        </section>
+
+        <section class="bg-white rounded-lg shadow p-6 mb-6">
+            <form action="{{ route('tarefas.index') }}" method="get">
+                @csrf
+
+                <div class="mt-4">
+                    <label for="filtro" class="block.mb-1.font-medium">
+                        Filtro
+                    </label>
+
+                    <select 
+                        name="filtro" 
+                        id="filtro"
+                        class="w-full border rounded px-3 py-2"
+                    >
+                        <option value="todas" selected disabled>Todas</option>
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                    @error('filtro')
+                        <p class="text-red-600 text-sm mt-1">
+                            {{ $message }}
+                        </p>
+                    @enderror
+                    <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded mt-2">
+                        Filtrar
+                    </button>
+                </div>
             </form>
         </section>
 
@@ -138,7 +181,7 @@
                                     @csrf
                                     @method('DELETE')
 
-                                    <button type="submit" class="text-red-600">
+                                    <button type="submit" class="text-red-600 ">
                                         Excluir
                                     </button>
                                 </form>
