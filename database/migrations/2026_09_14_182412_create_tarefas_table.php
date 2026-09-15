@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('titulo');
             $table->text('descricao')->nullable();
-            $table->string('prioridade')->default('media');
+            $table->enum('prioridade', ['baixa', 'media', 'alta'])->default('media');
+            $table->string('categoria')->nullable();
             $table->boolean('concluida')->default(false);
-            $table->timestamp('concluida_em')->nullable();
             $table->timestamps();
         });
     }

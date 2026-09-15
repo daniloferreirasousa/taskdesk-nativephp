@@ -11,25 +11,31 @@ class TarefaController extends Controller
 {
     public function index(Request $request)
     {
-        $filtro = $request->get('filtro');
+        $query = Tarefa::query();
 
-        $tarefasPendentes = Tarefa::where('concluida', false)
-            ->when($filtro, function ($query) use ($filtro) {
-                $query->where('prioridade', 'like', "%{$filtro}%");
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
-        
-        $tarefasConcluidas = Tarefa::where('concluida', true)
-            ->when($filtro, function ($query) use ($filtro) {
-                $query->where('prioridade', 'like', "%{$filtro}%");
-            })
-            ->orderBy('concluida_em', 'desc')
-            ->get();
+        // Pesquisa por título
+        if ($request->filled('busca')) {
+            $query->where('titulo', 'like', "%{$request->busca}%");
+        }
+
+        // Filtro por prioridade
+        if ($request->filled('prioridade')) {
+            $query->where('prioridade', 'like', "%{$request->prioridade}$");
+        }
+
+        // Filtro por status
+        if ($request->filled('status')) {
+            $query->where('concluida', false);
+        } elseif ($request->status === 'concluidas') {
+            $query->where('concluida', true);
+        }
+
+        $tarefas = $query->orderBy('created_at', 'desc')->get();
+        $categorias = Tarefa::select('categoria')->whereNotNull('categoria')->distinct()->pluck('categoria');
 
         return view('tarefas.index', compact(
-            'tarefasPendentes',
-            'tarefasConcluidas'
+            'tarefas',
+            'categorias'
         ));
     }
 
@@ -39,8 +45,8 @@ class TarefaController extends Controller
         $tarefa = Tarefa::create($request->validated());
 
         Notification::new()
-            ->title('TaskDesk - Nova Tarefa')
-            ->message("A tarefa '{$tarefa['titulo']}' foi adicionada.")
+            ->title('TaskDesk')
+            ->message("Nova tarefa '{$tarefa['titulo']}' criada com sucesso!")
             ->show();
         
         return redirect()->route('tarefas.index');
@@ -49,20 +55,11 @@ class TarefaController extends Controller
 
     public function toggleConcluida(Tarefa $tarefa)
     {
-        $tarefa->concluida = !$tarefa->concluida;
+        $tarefa->update([
+            'concluida' => !$tarefa->concluida
+        ]);
 
-        $tarefa->concluida_em = $tarefa->concluida ? now() : null;
-
-        $tarefa->save();
-
-        if ($tarefa->concluida) {
-            Notification::new()
-                ->title('Parabéns!')
-                ->message("Você concluiu: '{$tarefa->titulo}'")
-                ->show();
-        }
-
-        return redirect()->route('tarefas.index');
+        return redirect()->back();
     }
 
     
@@ -70,6 +67,11 @@ class TarefaController extends Controller
     {
         $tarefa->delete();
 
-        return redirect()->route('tarefas.index');
+        Notification::new()
+            ->title('TaskDesk')
+            ->message('Tarefa removida com sucesso.')
+            ->show();
+
+        return redirect()->back();
     }
 }

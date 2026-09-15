@@ -13,12 +13,11 @@ class Tarefa extends Model
         'titulo',
         'descricao',
         'prioridade',
+        'categoria',
         'concluida',
-        'concluida_em',
     ];
 
     protected $casts = [
         'concluida' => 'boolean',
-        'concluida_em'  => 'datetime',
     ];
 }

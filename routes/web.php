@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TarefaController;
+use App\Http\Controllers\RelatorioController;
 
 Route::get('/', [TarefaController::class, 'index'])->name('tarefas.index');
 
@@ -11,7 +12,13 @@ Route::patch('/tarefas/{tarefa}/toggle', [TarefaController::class, 'toggleConclu
 
 Route::delete('/tarefas/{tarefa}', [TarefaController::class, 'destroy'])->name('tarefas.destroy');
 
-Route::get('configuracoes', function () {
+Route::get('/relatorios', [RelatorioController::class, 'index'])->name('relatorios.index');
+
+Route::get('/relatorios/exportar', [RelatorioController::class, 'exportar'])->name('relatorios.exportar');
+
+Route::get('/relatorios/pasta', [RelatorioController::class, 'abrirPasta'])->name('relatorios.pasta');
+
+Route::get('/configuracoes', function () {
     return view('configuracoes');
 })->name('configuracoes');
 
